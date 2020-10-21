@@ -2,19 +2,18 @@ package path;
 
 import dxf.DXFImporter;
 import node.Node;
-import org.jgrapht.GraphPath;
-import org.jgrapht.graph.DefaultWeightedEdge;
+import node.NodePoi;
 import transform.CsvPoi2Node;
 import transform.DxfBuilding2Node;
 import transform.DxfPath2Node;
 import transform.Path2Node;
 import util.Container;
+import util.TimeRegion;
 import util.Util;
 import wblut.geom.WB_GeometryOp;
 import wblut.geom.WB_PolyLine;
 import wblut.geom.WB_Polygon;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -58,7 +57,7 @@ public class Manage {
     private void buildingSet() {
         DxfBuilding2Node node = new DxfBuilding2Node(roadPath);
         buildings = node.getNodes();
-        buildings.forEach(System.out::println);
+        System.out.println("Buildings.Size() = " + buildings.size());
     }
 
     private void pathSet() {
@@ -70,10 +69,51 @@ public class Manage {
     private void poiSet() {
         Path2Node node = new CsvPoi2Node(poiPath);
         pois = node.getNodes();
-        chooseNodeInBoundary(pois);
+//        System.out.println("Before = " + pois.size());
+        remainFullInfoNode(pois);
+//        System.out.println("After = " + pois.size());
+        remainNodeInBoundary(pois);
+        remainCorrectTimeNode(pois);
+        System.out.println("Pois.Size() = " + pois.size());
     }
 
-    private void chooseNodeInBoundary(List<Node> nodes) {
+    private int[] getStartEndTime(int time) {
+        int[] result = new int[2];
+        switch (time) {
+            case Container.MORNING:
+                result = new int[]{5, 10};
+                break;
+            case Container.NOON:
+                result = new int[]{10, 15};
+                break;
+            case Container.EVENING:
+                result = new int[]{17, 22};
+                break;
+        }
+        return result;
+    }
+
+    private void remainFullInfoNode(List<Node> nodes) {
+        List<Node> rest = nodes.stream().filter(e -> {
+            NodePoi poi = (NodePoi) e;
+            boolean remain = poi.getPrice() == -1;
+            remain &= poi.getShop_hours().isEmpty();
+            remain &= poi.getOverall_rating() == -1;
+            return remain;
+        }).collect(Collectors.toList());
+        nodes.removeAll(rest);
+    }
+
+    private void remainCorrectTimeNode(List<Node> nodes) {
+        List<Node> rest = nodes.stream().filter(e -> {
+            TimeRegion timeRegion = new TimeRegion(((NodePoi) e).getShop_hours());
+            int[] time = getStartEndTime(Container.TIME);
+            return !timeRegion.intersect(time[0], time[1]);
+        }).collect(Collectors.toList());
+        nodes.removeAll(rest);
+    }
+
+    private void remainNodeInBoundary(List<Node> nodes) {
         DXFImporter importer = new DXFImporter(roadPath);
         WB_Polygon boundary = importer.getPolygons("boundary").get(0);
         List<Node> rest = nodes.stream().filter(e -> !WB_GeometryOp.contains2D(e.getPt(), boundary)).collect(Collectors.toList());

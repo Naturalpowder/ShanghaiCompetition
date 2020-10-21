@@ -3,7 +3,6 @@ package path;
 import node.NodeBuilding;
 import node.NodePoi;
 import util.Container;
-import util.TimeRegion;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,60 +28,31 @@ public class BuildingCenterPaths {
         setDisProbabilities();
         setScoreProbabilities();
         setPriceProbabilities();
-        setTimeProbabilities();
-        double sum = 0;
-        for (Path path : paths) {
+        setDiningProbabilities();
+        for (Path path : paths)
             path.setProbability();
-            sum += path.getProbability();
-//            System.out.println(path);
-        }
-        System.out.println("Sum = " + sum);
     }
 
-    private void setTimeProbabilities() {
-        double p_a = 0, p_b = 0, p_c = 0;
-        switch (time) {
-            case Container.MORNING:
-                p_a = 1;
-                p_b = 0;
-                p_c = 0;
-                setTime(p_a, 0, 10);
-                break;
-            case Container.NOON:
-                p_a = 0;
-                p_b = 1;
-                p_c = 0;
-                setTime(p_b, 10, 17);
-                break;
-            case Container.EVENING:
-                p_a = 0;
-                p_b = 0;
-                p_c = 1;
-                setTime(p_c, 17, 24.1);
-                break;
-        }
+    private void setDiningProbabilities() {
+        setDining();
     }
 
-    private void setTime(double p_x, double start, double end) {
-        List<Path> x = getSelectPathOfTime(start, end);
+    private void setDining() {
+        List<Path> x = getSelectPathOfDining();
         emptyPrint(x);
+        System.out.println("DiningSize = " + x.size());
         for (Path path : x) {
-            path.setTime(p_x / x.size());
+            path.setDining((double) 1 / x.size());
         }
+    }
+
+    private List<Path> getSelectPathOfDining() {
+        return paths.stream().filter(e -> ((NodePoi) e.getPath().getEndVertex()).getSharing_or_not() == 1).collect(Collectors.toList());
     }
 
     private void emptyPrint(List<Path> x) {
         if (x.isEmpty())
             System.out.println("Empty Properties!");
-    }
-
-    private List<Path> getSelectPathOfTime(double start, double end) {
-        return paths.stream().filter(e -> intersect(((NodePoi) e.getPath().getEndVertex()).getShop_hours(), start, end)).collect(Collectors.toList());
-    }
-
-    private boolean intersect(String shop_hours, double start, double end) {
-        TimeRegion timeRegion = new TimeRegion(shop_hours);
-        return timeRegion.intersect(start, end);
     }
 
     private void setScoreProbabilities() {
@@ -101,8 +71,8 @@ public class BuildingCenterPaths {
                 p_b = .7;
                 break;
         }
-        setScore(p_a, 0, 4);
-        setScore(p_b, 4, 5.1);
+        setScore(p_a, 0, 3.5);
+        setScore(p_b, 3.5, 5.1);
     }
 
     private void setScore(double p_x, double start, double end) {
@@ -164,7 +134,7 @@ public class BuildingCenterPaths {
         double sum = 0;
         for (Path path : paths) {
             double weight = path.getPath().getWeight();
-            double dis = 1 / weight;
+            double dis = 1 / Math.pow(weight, 2);
             path.setDis(dis);
             sum += dis;
         }

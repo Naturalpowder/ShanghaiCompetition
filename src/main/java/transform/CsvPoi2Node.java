@@ -61,6 +61,11 @@ public class CsvPoi2Node extends Path2Node {
                         if (!v.isEmpty() && !v.contains("-"))
                             num = Double.parseDouble(v);
                         field.set(poi, num);
+                    } else if (type.endsWith("int")) {
+                        int num = -1;
+                        if (!v.isEmpty())
+                            num = Integer.parseInt(v);
+                        field.set(poi, num);
                     }
                 }
             }

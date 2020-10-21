@@ -44,7 +44,6 @@ public class PathSelector {
         return centerPaths;
     }
 
-
     public List<Path> randomChoose() {
         List<Path> result = new ArrayList<>();
         for (BuildingCenterPaths centerPath : centerPaths) {

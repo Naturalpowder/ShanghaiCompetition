@@ -15,6 +15,7 @@ import java.util.Objects;
 public class NodePoi extends Node {
     private String name, shop_hours, tag, content_tag, uid;
     private double lat, lng, price, service_rating, environment_rating, taste_rating, overall_rating, comment_num, image_num;
+    private int sharing_or_not;
 
     @Override
     public String toString() {
@@ -31,6 +32,10 @@ public class NodePoi extends Node {
 
     public String getName() {
         return name;
+    }
+
+    public int getSharing_or_not() {
+        return sharing_or_not;
     }
 
     public double getPrice() {
