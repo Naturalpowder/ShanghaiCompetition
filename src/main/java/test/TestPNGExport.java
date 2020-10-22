@@ -6,7 +6,7 @@ import node.Node;
 import path.Manage;
 import processing.core.PApplet;
 import processing.core.PGraphics;
-import processing.pdf.*;
+//import processing.pdf.*;
 import wblut.geom.WB_Circle;
 import wblut.geom.WB_Point;
 import wblut.geom.WB_PolyLine;

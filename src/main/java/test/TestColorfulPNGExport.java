@@ -79,12 +79,12 @@ public class TestColorfulPNGExport extends PApplet {
         //Path
         pg.strokeWeight(5 * scale);
         for (TwoPointPath path : paths) {
-            pg.stroke(path.getColor(false).getRGB());
+            pg.stroke(path.getColor(true).getRGB());
             render.drawPolyLine2D(path.getPolyLine());
         }
         pg.popStyle();
         pg.endDraw();
-        pg.save("src/main/data/1022/DifferentScale/Colorful_Morning_Copy.png");
+        pg.save("src/main/data/1023/SameScale/Colorful_Evening.png");
         System.out.println("Save Image!");
         exit();
     }

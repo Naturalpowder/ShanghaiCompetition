@@ -120,7 +120,7 @@ public class TestFullDayColorfulPNGExport extends PApplet {
         }
         pg.popStyle();
         pg.endDraw();
-        pg.save("src/main/data/1022/Colorful_FullDay.png");
+        pg.save("src/main/data/1023/Colorful_FullDay.png");
         System.out.println("Save Image!");
         exit();
     }
