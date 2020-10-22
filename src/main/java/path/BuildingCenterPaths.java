@@ -40,7 +40,7 @@ public class BuildingCenterPaths {
     private void setDining() {
         List<Path> x = getSelectPathOfDining();
         emptyPrint(x);
-        System.out.println("DiningSize = " + x.size());
+//        System.out.println("DiningSize = " + x.size());
         for (Path path : x) {
             path.setDining((double) 1 / x.size());
         }
@@ -59,20 +59,20 @@ public class BuildingCenterPaths {
         double p_a = 0, p_b = 0;
         switch (time) {
             case Container.MORNING:
-                p_a = .2;
-                p_b = .8;
-                break;
-            case Container.NOON:
-                p_a = .1;
-                p_b = .9;
-                break;
-            case Container.EVENING:
                 p_a = .3;
                 p_b = .7;
                 break;
+            case Container.NOON:
+                p_a = .2;
+                p_b = .8;
+                break;
+            case Container.EVENING:
+                p_a = .1;
+                p_b = .9;
+                break;
         }
-        setScore(p_a, 0, 3.5);
-        setScore(p_b, 3.5, 5.1);
+        setScore(p_a, 0, 3);
+        setScore(p_b, 3, 5.1);
     }
 
     private void setScore(double p_x, double start, double end) {
@@ -91,22 +91,22 @@ public class BuildingCenterPaths {
         double p_a = 0, p_b = 0, p_c = 0, p_d = 0;
         switch (time) {
             case Container.MORNING:
-                p_a = .6;
-                p_b = .3;
+                p_a = .7;
+                p_b = .2;
                 p_c = .1;
                 p_d = 0.;
                 break;
             case Container.NOON:
-                p_a = .3;
-                p_b = .5;
+                p_a = .05;
+                p_b = .75;
                 p_c = .15;
                 p_d = .05;
                 break;
             case Container.EVENING:
                 p_a = .25;
-                p_b = .45;
+                p_b = .5;
                 p_c = .2;
-                p_d = .1;
+                p_d = .05;
                 break;
         }
         setPrice(p_a, 0, 20);

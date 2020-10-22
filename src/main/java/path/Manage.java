@@ -14,9 +14,7 @@ import wblut.geom.WB_GeometryOp;
 import wblut.geom.WB_PolyLine;
 import wblut.geom.WB_Polygon;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Manage {
@@ -25,8 +23,9 @@ public class Manage {
     private List<int[]> edges, pathEdges;
 
     public static void main(String[] args) {
-        Manage manage = new Manage("src/main/data/poi1020.csv", "src/main/data/1020.dxf");
-        List<WB_PolyLine> polyLines = manage.getRandomShortestPath();
+        Manage manage = new Manage("src/main/data/poi1021.csv", "src/main/data/1021.dxf");
+        List<TwoPointPath> list = manage.getRandomShortestPathColorful();
+        System.out.println(list.size());
     }
 
     public Manage(String poiPath, String roadPath) {
@@ -44,14 +43,39 @@ public class Manage {
     }
 
     public List<WB_PolyLine> getRandomShortestPath() {
+        List<Path> randomPaths = getRandomShortestPathOriginal();
+        return randomPaths.stream().map(e -> Util.toPolyLineWithoutEnds(e.getPath())).collect(Collectors.toList());
+    }
+
+    public List<TwoPointPath> getRandomShortestPathColorful() {
+        List<Path> randomPaths = getRandomShortestPathOriginal();
+        List<TwoPointPath> list = new ArrayList<>();
+        for (Path randomPath : randomPaths) {
+            List<Node> nodes = randomPath.getPath().getVertexList();
+            for (int i = 1; i < nodes.size() - 2; i++) {
+                TwoPointPath path = new TwoPointPath(nodes.get(i), nodes.get(i + 1));
+                if (list.contains(path))
+                    list.get(list.indexOf(path)).add(1);
+                else
+                    list.add(path);
+            }
+        }
+        list.sort(Comparator.comparingInt(TwoPointPath::getSum));
+        for (TwoPointPath path : list) {
+            path.setMax(list.get(list.size() - 1).getSum());
+            path.setMin(list.get(0).getSum());
+        }
+        System.out.println("Max = " + list.get(0).getMax());
+        System.out.println("Min = " + list.get(0).getMin());
+        return list;
+    }
+
+    public List<Path> getRandomShortestPathOriginal() {
         ShortestPath shortestPath = new ShortestPath(pois, buildings, nodes, edges);
         PathSelector selector = new PathSelector(shortestPath.getShortestPath());
         List<Path> randomPaths = selector.randomChoose();
-        for (Path randomPath : randomPaths) {
-//            System.out.println(randomPath);
-        }
         System.out.println("randomPaths.Size() = " + randomPaths.size());
-        return randomPaths.stream().map(e -> Util.toPolyLineWithoutEnds(e.getPath())).collect(Collectors.toList());
+        return randomPaths;
     }
 
     private void buildingSet() {
@@ -64,6 +88,7 @@ public class Manage {
         Path2Node node = new DxfPath2Node(roadPath);
         path = node.getNodes();
         pathEdges = node.getEdges();
+        System.out.println("PathEdges.Size() = " + pathEdges.size());
     }
 
     private void poiSet() {
@@ -73,7 +98,6 @@ public class Manage {
         remainFullInfoNode(pois);
 //        System.out.println("After = " + pois.size());
         remainNodeInBoundary(pois);
-        remainCorrectTimeNode(pois);
         System.out.println("Pois.Size() = " + pois.size());
     }
 
@@ -135,6 +159,7 @@ public class Manage {
         nodesAdd.initial();
         edges = nodesAdd.getEdges();
         nodes = nodesAdd.getNodes();
+        remainCorrectTimeNode(pois);
 //        printInfo();
         System.out.println("edges = " + edges.size());
         System.out.println("nodes = " + nodes.size());

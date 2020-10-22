@@ -4,9 +4,9 @@ import dxf.DXFImporter;
 import gzf.gui.CameraController;
 import node.Node;
 import path.Manage;
+import path.TwoPointPath;
 import processing.core.PApplet;
 import processing.core.PGraphics;
-import processing.pdf.*;
 import wblut.geom.WB_Circle;
 import wblut.geom.WB_Point;
 import wblut.geom.WB_PolyLine;
@@ -15,20 +15,20 @@ import wblut.processing.WB_Render2D;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TestPNGExport extends PApplet {
+public class TestColorfulPNGExport extends PApplet {
     private PGraphics pGraphics;
     private CameraController camera;
     private WB_Render2D render;
     private List<WB_Circle> buildings;
     private List<WB_PolyLine> roads;
-    private List<WB_PolyLine> paths;
+    private List<TwoPointPath> paths;
     private List<WB_Point> pois;
-    private final static String dxfPath = "src/main/data/1021.dxf";
-    private final static String poiPath = "src/main/data/poi1021.csv";
+    private final static String dxfPath = "src/main/data/1022.dxf";
+    private final static String poiPath = "src/main/data/poi1022.csv";
     private final float scale = 2;
 
     public static void main(String[] args) {
-        PApplet.main("test.TestPNGExport");
+        PApplet.main("test.TestColorfulPNGExport");
     }
 
     @Override
@@ -47,7 +47,7 @@ public class TestPNGExport extends PApplet {
         buildings = importer.getCircles("building").stream().map(e -> new WB_Circle(e.getCenter(), 5 * scale)).collect(Collectors.toList());
         Manage manage = new Manage(poiPath, dxfPath);
         pois = manage.getPois().stream().map(Node::getPt).collect(Collectors.toList());
-        paths = manage.getRandomShortestPath();
+        paths = manage.getRandomShortestPathColorful();
         drawImage(pGraphics);
         long end = System.currentTimeMillis();
         System.out.println("Cost Time = " + (end - start) / 1000. + " s");
@@ -77,12 +77,14 @@ public class TestPNGExport extends PApplet {
         pg.strokeWeight(4 * scale);
         buildings.forEach(e -> render.drawCircle2D(e));
         //Path
-        pg.stroke(255, 0, 0, 1);
         pg.strokeWeight(5 * scale);
-        paths.forEach(e -> render.drawPolyLine2D(e));
+        for (TwoPointPath path : paths) {
+            pg.stroke(path.getColor(false).getRGB());
+            render.drawPolyLine2D(path.getPolyLine());
+        }
         pg.popStyle();
         pg.endDraw();
-        pg.save("src/main/data/Red.png");
+        pg.save("src/main/data/1022/DifferentScale/Colorful_Morning_Copy.png");
         System.out.println("Save Image!");
         exit();
     }

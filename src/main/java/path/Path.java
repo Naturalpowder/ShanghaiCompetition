@@ -15,19 +15,24 @@ import util.Container;
 public class Path {
     private final GraphPath<Node, DefaultWeightedEdge> path;
     private double probability, dis, price, score, dining;
-    private double disScale = .15, priceScale = .1, scoreScale = .05, diningScale = 0.7;//.25,.2,.45,.1
+    private double disScale = .7, priceScale = .1, scoreScale = .05, diningScale = 0.15;//.25,.2,.45,.1
 
     public Path(GraphPath<Node, DefaultWeightedEdge> path) {
         this.path = path;
-        setParameters();
+        setParameters(Container.TIME);
     }
 
-    private void setParameters() {
-        if (Container.TIME == Container.MORNING) {
-            disScale = .5;
-            priceScale = .4;
-            scoreScale = .1;
-            diningScale = .0;
+    private void setParameters(int time) {
+        if (time == Container.NOON) {
+            disScale = .2;
+            priceScale = .05;
+            scoreScale = .05;
+            diningScale = .7;
+        } else if (time == Container.EVENING) {
+            disScale = .1;
+            priceScale = .05;
+            scoreScale = .65;
+            diningScale = .2;
         }
     }
 

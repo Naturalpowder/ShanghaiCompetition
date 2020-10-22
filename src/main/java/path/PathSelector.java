@@ -48,6 +48,17 @@ public class PathSelector {
         List<Path> result = new ArrayList<>();
         for (BuildingCenterPaths centerPath : centerPaths) {
             int amount = centerPath.getBuilding().getAmount() - centerPath.getBuilding().getDining();
+            switch (Container.TIME) {
+                case Container.MORNING:
+                    amount *= .25;
+                    break;
+                case Container.NOON:
+                    amount *= .65;
+                    break;
+                case Container.EVENING:
+                    amount *= .1;
+                    break;
+            }
             for (int i = 0; i < amount; i++) {
                 result.add(randomChooseOne(centerPath.getPaths()));
             }
