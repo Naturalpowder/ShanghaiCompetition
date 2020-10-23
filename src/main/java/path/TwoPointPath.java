@@ -59,7 +59,7 @@ public class TwoPointPath {
     public Color getColor(boolean sameScale) {
         double section;
         if (sameScale)
-            section = 7571.;
+            section = 6969.;
         else
             section = max - min;
         float hue = (float) (Math.sqrt((sum - min) / section) * .3333 + .6667);

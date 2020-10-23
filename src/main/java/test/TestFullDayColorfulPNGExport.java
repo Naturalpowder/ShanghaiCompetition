@@ -24,7 +24,7 @@ public class TestFullDayColorfulPNGExport extends PApplet {
     private List<WB_PolyLine> roads;
     private List<TwoPointPath> paths;
     private List<WB_Point> pois;
-    private final static String dxfPath = "src/main/data/1022.dxf";
+    private final static String dxfPath = "src/main/data/1023.dxf";
     private final static String poiPath = "src/main/data/poi1022.csv";
     private final float scale = 2;
 
@@ -120,7 +120,7 @@ public class TestFullDayColorfulPNGExport extends PApplet {
         }
         pg.popStyle();
         pg.endDraw();
-        pg.save("src/main/data/1023/Colorful_FullDay.png");
+        pg.save("src/main/data/1023_2/Colorful_FullDay.png");
         System.out.println("Save Image!");
         exit();
     }
