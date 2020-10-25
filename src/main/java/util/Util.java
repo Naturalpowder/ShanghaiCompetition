@@ -6,6 +6,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import wblut.geom.WB_Point;
 import wblut.geom.WB_PolyLine;
 
+import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,5 +30,12 @@ public class Util {
         points.remove(0);
         points.remove(points.size() - 1);
         return new WB_PolyLine(points);
+    }
+
+    public static Color getColor(double section, double min, double amount) {
+        double v = Math.sqrt((amount - min) / section);
+        float hue = (float) (v * .3333 + .6667);
+        float brightness = (float) (v * 1 + 0);
+        return Color.getHSBColor(hue, brightness, 1);
     }
 }

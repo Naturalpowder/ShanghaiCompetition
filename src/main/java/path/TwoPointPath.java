@@ -1,6 +1,8 @@
 package path;
 
 import node.Node;
+import org.jetbrains.annotations.NotNull;
+import util.Util;
 import wblut.geom.WB_PolyLine;
 
 import java.awt.*;
@@ -62,10 +64,7 @@ public class TwoPointPath {
             section = 6969.;
         else
             section = max - min;
-        float hue = (float) (Math.sqrt((sum - min) / section) * .3333 + .6667);
-        float brightness = (float) (Math.sqrt((sum - min) / section) * 1 + 0);
-//        System.out.println(hue);
-        return Color.getHSBColor(hue, brightness, 1);
+        return Util.getColor(section, min, sum);
     }
 
     public WB_PolyLine getPolyLine() {
