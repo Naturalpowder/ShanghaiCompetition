@@ -4,6 +4,7 @@ import path.Manage;
 import path.TwoPointPath;
 import processing.core.PApplet;
 import util.Legend;
+import wblut.geom.WB_Point;
 
 import java.util.List;
 
@@ -14,7 +15,6 @@ import java.util.List;
  * @create: 2020-10-25 10:38
  **/
 public class TestLegend extends PApplet {
-    private Legend legend;
 
     public static void main(String[] args) {
         PApplet.main("test.TestLegend");
@@ -22,18 +22,17 @@ public class TestLegend extends PApplet {
 
     @Override
     public void settings() {
-        size(2000, 1200);
+        size(800, 600);
     }
 
     @Override
     public void setup() {
-        legend = new Legend();
     }
 
     @Override
     public void draw() {
         background(255);
-        legend.draw(this.g);
+        new Legend().draw(this.g, new WB_Point(width / 2., height / 2.), 2, "src/main/data/1023_2/FullDay.png");
         exit();
     }
 }

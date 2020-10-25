@@ -47,23 +47,33 @@ public class PathSelector {
     public List<Path> randomChoose() {
         List<Path> result = new ArrayList<>();
         for (BuildingCenterPaths centerPath : centerPaths) {
-            int amount = centerPath.getBuilding().getDining();
-            switch (Container.TIME) {
-                case Container.MORNING:
-                    amount *= .25;
-                    break;
-                case Container.NOON:
-                    amount *= .65;
-                    break;
-                case Container.EVENING:
-                    amount *= .1;
-                    break;
-            }
-            for (int i = 0; i < amount; i++) {
-                result.add(randomChooseOne(centerPath.getPaths()));
-            }
+            result.addAll(randomChooseOneBuilding(centerPath));
         }
         return result;
+    }
+
+    public List<Path> randomChooseOneBuilding(BuildingCenterPaths centerPath) {
+        List<Path> result = new ArrayList<>();
+        int amount = centerPath.getBuilding().getDining();
+        switch (Container.TIME) {
+            case Container.MORNING:
+                amount *= .25;
+                break;
+            case Container.NOON:
+                amount *= .65;
+                break;
+            case Container.EVENING:
+                amount *= .1;
+                break;
+        }
+        for (int i = 0; i < amount; i++) {
+            result.add(randomChooseOne(centerPath.getPaths()));
+        }
+        return result;
+    }
+
+    public List<BuildingCenterPaths> getCenterPaths() {
+        return centerPaths;
     }
 
     private Path randomChooseOne(List<Path> select) {

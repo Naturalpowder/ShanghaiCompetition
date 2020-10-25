@@ -2,6 +2,7 @@ package path;
 
 import node.Node;
 import org.jetbrains.annotations.NotNull;
+import util.Container;
 import util.Util;
 import wblut.geom.WB_PolyLine;
 
@@ -61,7 +62,7 @@ public class TwoPointPath {
     public Color getColor(boolean sameScale) {
         double section;
         if (sameScale)
-            section = 6969.;
+            section = Container.SECTION;
         else
             section = max - min;
         return Util.getColor(section, min, sum);

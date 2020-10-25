@@ -6,6 +6,7 @@ import node.Node;
 import node.NodePath;
 import wblut.geom.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +24,7 @@ public class DxfPath2Node extends Path2Node {
     @Override
     protected void set(String filePath) {
         String layer = "path";
-        DXFImporter importer = new DXFImporter(filePath);
+        DXFImporter importer = new DXFImporter(filePath, DXFImporter.GBK);
         List<WB_PolyLine> polyLines = importer.getPolyLines(layer);
         List<WB_Polygon> polygons = importer.getPolygons(layer);
         addPolygons(polygons);

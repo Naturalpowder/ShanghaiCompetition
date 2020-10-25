@@ -14,6 +14,8 @@ import wblut.geom.WB_GeometryOp;
 import wblut.geom.WB_PolyLine;
 import wblut.geom.WB_Polygon;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,7 @@ public class Manage {
     private final String poiPath, roadPath;
     private List<Node> nodes, pois, buildings, path;
     private List<int[]> edges, pathEdges;
+    private PathSelector selector;
 
     public static void main(String[] args) {
         Manage manage = new Manage("src/main/data/poi1021.csv", "src/main/data/1021.dxf");
@@ -40,26 +43,38 @@ public class Manage {
         pathSet();
         buildingSet();
         addNodesEdges();
+        setShortestPath();
     }
 
     public List<WB_PolyLine> getRandomShortestPath() {
-        List<Path> randomPaths = getRandomShortestPathOriginal();
+        List<Path> randomPaths = selector.randomChoose();
         return randomPaths.stream().map(e -> Util.toPolyLineWithoutEnds(e.getPath())).collect(Collectors.toList());
     }
 
-    public List<TwoPointPath> getRandomShortestPathColorful() {
-        List<Path> randomPaths = getRandomShortestPathOriginal();
-        List<TwoPointPath> list = new ArrayList<>();
+    public List<BuildingCenterPaths> getBuildingCenterPath() {
+        return selector.getCenterPaths();
+    }
+
+    public List<TwoPointPath> getBuildingNRandomShortestPathColorful(BuildingCenterPaths centerPaths) {
+        List<TwoPointPath> paths = new ArrayList<>();
+        List<Path> randomPaths = selector.randomChooseOneBuilding(centerPaths);
         for (Path randomPath : randomPaths) {
-            List<Node> nodes = randomPath.getPath().getVertexList();
-            for (int i = 1; i < nodes.size() - 2; i++) {
-                TwoPointPath path = new TwoPointPath(nodes.get(i), nodes.get(i + 1));
-                if (list.contains(path))
-                    list.get(list.indexOf(path)).add(1);
-                else
-                    list.add(path);
-            }
+            addTwoPointPath(paths, randomPath);
         }
+        setTwoPointPaths(paths);
+        return paths;
+    }
+
+    public List<TwoPointPath> getRandomShortestPathColorful() {
+        List<Path> randomPaths = selector.randomChoose();
+        List<TwoPointPath> list = new ArrayList<>();
+        for (Path randomPath : randomPaths)
+            addTwoPointPath(list, randomPath);
+        setTwoPointPaths(list);
+        return list;
+    }
+
+    private void setTwoPointPaths(List<TwoPointPath> list) {
         list.sort(Comparator.comparingInt(TwoPointPath::getSum));
         for (TwoPointPath path : list) {
             path.setMax(list.get(list.size() - 1).getSum());
@@ -67,15 +82,17 @@ public class Manage {
         }
         System.out.println("Max = " + list.get(0).getMax());
         System.out.println("Min = " + list.get(0).getMin());
-        return list;
     }
 
-    public List<Path> getRandomShortestPathOriginal() {
-        ShortestPath shortestPath = new ShortestPath(pois, buildings, nodes, edges);
-        PathSelector selector = new PathSelector(shortestPath.getShortestPath());
-        List<Path> randomPaths = selector.randomChoose();
-        System.out.println("randomPaths.Size() = " + randomPaths.size());
-        return randomPaths;
+    private void addTwoPointPath(List<TwoPointPath> list, Path randomPath) {
+        List<Node> nodes = randomPath.getPath().getVertexList();
+        for (int i = 1; i < nodes.size() - 2; i++) {
+            TwoPointPath path = new TwoPointPath(nodes.get(i), nodes.get(i + 1));
+            if (list.contains(path))
+                list.get(list.indexOf(path)).add(1);
+            else
+                list.add(path);
+        }
     }
 
     private void buildingSet() {
@@ -138,7 +155,7 @@ public class Manage {
     }
 
     private void remainNodeInBoundary(List<Node> nodes) {
-        DXFImporter importer = new DXFImporter(roadPath);
+        DXFImporter importer = new DXFImporter(roadPath, DXFImporter.GBK);
         WB_Polygon boundary = importer.getPolygons("boundary").get(0);
         List<Node> rest = nodes.stream().filter(e -> !WB_GeometryOp.contains2D(e.getPt(), boundary)).collect(Collectors.toList());
         nodes.removeAll(rest);
@@ -165,7 +182,12 @@ public class Manage {
         System.out.println("nodes = " + nodes.size());
     }
 
-    private void printInfo() {
+    private void setShortestPath() {
+        ShortestPath shortestPath = new ShortestPath(pois, buildings, nodes, edges);
+        selector = new PathSelector(shortestPath.getShortestPath());
+    }
+
+    public void printInfo() {
         for (Node node : nodes) {
             System.out.println("Node = " + node);
         }

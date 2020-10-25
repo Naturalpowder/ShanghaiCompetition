@@ -13,6 +13,7 @@ import util.Container;
 import wblut.geom.*;
 import wblut.processing.WB_Render2D;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,12 +44,12 @@ public class TestFullDayColorfulPNGExport extends PApplet {
 //        pGraphics = createGraphics(4000, 3000);
         PGraphics pGraphics = this.g;
         render = new WB_Render2D(pGraphics);
-        DXFImporter importer = new DXFImporter(dxfPath);
+        DXFImporter importer = new DXFImporter(dxfPath,DXFImporter.GBK);
         roads = importer.getPolyLines("path");
         buildings = importer.getCircles("building").stream().map(e -> new WB_Circle(e.getCenter(), 5 * scale)).collect(Collectors.toList());
 
         //pois
-        DXFImporter dxfImporter = new DXFImporter(dxfPath);
+        DXFImporter dxfImporter = new DXFImporter(dxfPath,DXFImporter.GBK);
         WB_Polygon boundary = dxfImporter.getPolygons("boundary").get(0);
         Path2Node nodes = new CsvPoi2Node(poiPath);
         pois = nodes.getNodes().stream().map(Node::getPt).collect(Collectors.toList());

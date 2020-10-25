@@ -11,10 +11,9 @@ import wblut.geom.WB_Point;
 import wblut.geom.WB_PolyLine;
 import wblut.geom.WB_Polygon;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
  * @create: 2020-10-15 15:00
  **/
 public class DXFImporter {
+    public static final String GBK = "gbk", UTF_8 = "utf-8";
 
     /**
      * Example
@@ -34,16 +34,18 @@ public class DXFImporter {
      * @param args
      */
     public static void main(String[] args) {
-        DXFImporter importer = new DXFImporter("src/main/data/LineRead.dxf");
+        DXFImporter importer = new DXFImporter("src/main/data/LineRead.dxf", GBK);
         List<WB_PolyLine> lines = importer.getLines("0");
         List<WB_Point> points = importer.getPoints("0");
     }
 
     private final String filePath;
     private DXFDocument doc;
+    private final String encoding;
 
-    public DXFImporter(String filePath) {
+    public DXFImporter(String filePath, String encoding) {
         this.filePath = filePath;
+        this.encoding = encoding;
         read();
     }
 
@@ -155,7 +157,7 @@ public class DXFImporter {
         InputStream in = getInputStream(filePath);
         Parser parser = ParserBuilder.createDefaultParser();
         try {
-            parser.parse(in, DXFParser.DEFAULT_ENCODING);
+            parser.parse(in, encoding);
             doc = parser.getDocument();
         } catch (ParseException e) {
             e.printStackTrace();

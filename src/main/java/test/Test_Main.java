@@ -17,6 +17,7 @@ import wblut.geom.WB_Point;
 import wblut.geom.WB_PolyLine;
 import wblut.processing.WB_Render;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,7 @@ public class Test_Main extends PApplet {
         camera = new CameraController(this);
         camera.top();
         render = new WB_Render(this);
-        DXFImporter importer = new DXFImporter(dxfPath);
+        DXFImporter importer = new DXFImporter(dxfPath, DXFImporter.GBK);
         roads = importer.getPolyLines("path");
         buildings = importer.getCircles("building").stream().map(e -> new WB_Circle(e.getCenter(), 10)).collect(Collectors.toList());
         Manage manage = new Manage(poiPath, dxfPath);

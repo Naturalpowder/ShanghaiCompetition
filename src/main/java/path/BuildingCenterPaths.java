@@ -1,5 +1,6 @@
 package path;
 
+import node.Node;
 import node.NodeBuilding;
 import node.NodePoi;
 import util.Container;
@@ -141,6 +142,10 @@ public class BuildingCenterPaths {
         for (Path path : paths) {
             path.setDis(path.getDis() / sum);
         }
+    }
+
+    public List<Node> getPois() {
+        return paths.stream().map(e -> e.getPath().getEndVertex()).collect(Collectors.toList());
     }
 
     public NodeBuilding getBuilding() {

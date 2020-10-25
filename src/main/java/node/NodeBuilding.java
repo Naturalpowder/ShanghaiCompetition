@@ -10,16 +10,22 @@ import wblut.geom.WB_Point;
  **/
 public class NodeBuilding extends Node {
     private final int amount, dining;
+    private final String name;
 
-    public NodeBuilding(int amount, WB_Point pt, int dining) {
+    public NodeBuilding(int amount, WB_Point pt, int dining, String name) {
         this.amount = amount;
         this.pt = pt;
         this.dining = dining;
+        this.name = name;
     }
 
     @Override
     protected void setPt() {
 
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getAmount() {
