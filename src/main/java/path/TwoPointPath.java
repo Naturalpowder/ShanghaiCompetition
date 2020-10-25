@@ -1,14 +1,12 @@
 package path;
 
 import node.Node;
-import org.jetbrains.annotations.NotNull;
 import util.Container;
 import util.Util;
 import wblut.geom.WB_PolyLine;
 
 import java.awt.*;
 import java.util.Objects;
-import java.util.Scanner;
 
 /**
  * @program: ShanghaiCompetition

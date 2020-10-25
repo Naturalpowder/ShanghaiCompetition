@@ -82,6 +82,7 @@ public class Manage {
         }
         System.out.println("Max = " + list.get(0).getMax());
         System.out.println("Min = " + list.get(0).getMin());
+        System.out.println("-------------------------------");
     }
 
     private void addTwoPointPath(List<TwoPointPath> list, Path randomPath) {
