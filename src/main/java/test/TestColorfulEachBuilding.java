@@ -6,7 +6,7 @@ import node.Node;
 import node.NodeBuilding;
 import path.BuildingCenterPaths;
 import path.Manage;
-import path.TwoPointPath;
+import path.Segment;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import transform.CsvPoi2Node;
@@ -102,7 +102,7 @@ public class TestColorfulEachBuilding extends PApplet {
                 PGraphics pGraphics = app.createGraphics(4000, 3000);
                 render = new WB_Render2D(pGraphics);
                 WB_Circle building = new WB_Circle(item.getBuilding().getPt(), 10 * scale);
-                List<TwoPointPath> paths = item.getPaths();
+                List<Segment> paths = item.getPaths();
                 String name = item.getBuilding().getName();
                 if (fullDay)
                     Container.TIME = -1;
@@ -115,9 +115,9 @@ public class TestColorfulEachBuilding extends PApplet {
             app.exit();
         }
 
-        private void setMinMax(List<TwoPointPath> list) {
-            list.sort(Comparator.comparingInt(TwoPointPath::getSum));
-            for (TwoPointPath path : list) {
+        private void setMinMax(List<Segment> list) {
+            list.sort(Comparator.comparingInt(Segment::getSum));
+            for (Segment path : list) {
                 path.setMax(list.get(list.size() - 1).getSum());
                 path.setMin(list.get(0).getSum());
             }
@@ -136,7 +136,7 @@ public class TestColorfulEachBuilding extends PApplet {
 
         private void setBuildingCenterPaths(Manage manage, List<BuildingCenterPaths> centerPaths, int i) {
             BuildingCenterPaths centerPath = centerPaths.get(i);
-            List<TwoPointPath> paths = manage.getBuildingNRandomShortestPathColorful(centerPath);
+            List<Segment> paths = manage.getBuildingNRandomShortestPathColorful(centerPath);
             if (centerPaths.size() > items.size()) {
                 Item item = new Item(centerPath);
                 item.add(paths);
@@ -148,7 +148,7 @@ public class TestColorfulEachBuilding extends PApplet {
             }
         }
 
-        private void drawImage(PGraphics pg, String filePath, boolean sameScale, WB_Circle building, List<TwoPointPath> paths) {
+        private void drawImage(PGraphics pg, String filePath, boolean sameScale, WB_Circle building, List<Segment> paths) {
             pg.beginDraw();
             pg.background(255);
             drawElements(pg, sameScale, building, paths);
@@ -157,7 +157,7 @@ public class TestColorfulEachBuilding extends PApplet {
             System.out.println("Save Image " + filePath + " !");
         }
 
-        private void drawElements(PGraphics pg, boolean sameScale, WB_Circle building, List<TwoPointPath> paths) {
+        private void drawElements(PGraphics pg, boolean sameScale, WB_Circle building, List<Segment> paths) {
             pg.pushStyle();
             pg.pushMatrix();
             pg.strokeCap(SQUARE);
@@ -177,7 +177,7 @@ public class TestColorfulEachBuilding extends PApplet {
             render.drawCircle2D(building);
             //Path
             pg.strokeWeight(5 * scale);
-            for (TwoPointPath path : paths) {
+            for (Segment path : paths) {
                 pg.stroke(path.getColor(sameScale).getRGB());
                 render.drawPolyLine2D(path.getPolyLine());
             }
@@ -187,7 +187,7 @@ public class TestColorfulEachBuilding extends PApplet {
         }
 
         static class Item {
-            private final List<TwoPointPath> paths;
+            private final List<Segment> paths;
             private final NodeBuilding building;
             private final List<Node> pois;
 
@@ -197,8 +197,8 @@ public class TestColorfulEachBuilding extends PApplet {
                 pois = centerPaths.getPois();
             }
 
-            public void add(List<TwoPointPath> paths) {
-                for (TwoPointPath path : paths)
+            public void add(List<Segment> paths) {
+                for (Segment path : paths)
                     if (!this.paths.contains(path))
                         this.paths.add(path);
                     else
@@ -209,7 +209,7 @@ public class TestColorfulEachBuilding extends PApplet {
                 return pois;
             }
 
-            public List<TwoPointPath> getPaths() {
+            public List<Segment> getPaths() {
                 return paths;
             }
 

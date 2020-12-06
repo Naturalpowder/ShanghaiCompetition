@@ -13,7 +13,7 @@ import java.util.Objects;
  * @create: 2020-10-16 17:43
  **/
 public class NodePoi extends Node {
-    private String name, shop_hours, tag, content_tag, uid;
+    private String name, shop_hours, tag, content_tag, uid, address;
     private double lat, lng, price, service_rating, environment_rating, taste_rating, overall_rating, comment_num, image_num;
     private int sharing_or_not;
 

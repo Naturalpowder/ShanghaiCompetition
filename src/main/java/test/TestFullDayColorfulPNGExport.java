@@ -4,7 +4,7 @@ import dxf.DXFImporter;
 import gzf.gui.CameraController;
 import node.Node;
 import path.Manage;
-import path.TwoPointPath;
+import path.Segment;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import transform.CsvPoi2Node;
@@ -13,7 +13,6 @@ import util.Container;
 import wblut.geom.*;
 import wblut.processing.WB_Render2D;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +22,7 @@ public class TestFullDayColorfulPNGExport extends PApplet {
     private WB_Render2D render;
     private List<WB_Circle> buildings;
     private List<WB_PolyLine> roads;
-    private List<TwoPointPath> paths;
+    private List<Segment> paths;
     private List<WB_Point> pois;
     private final static String dxfPath = "src/main/data/1023.dxf";
     private final static String poiPath = "src/main/data/poi1022.csv";
@@ -71,8 +70,8 @@ public class TestFullDayColorfulPNGExport extends PApplet {
     private void addPaths(int num) {
         Container.TIME = num;
         Manage manage = new Manage(poiPath, dxfPath);
-        List<TwoPointPath> twoPointPaths = manage.getRandomShortestPathColorful();
-        for (TwoPointPath path : twoPointPaths) {
+        List<Segment> segments = manage.getRandomShortestPathColorful();
+        for (Segment path : segments) {
             if (paths.contains(path)) {
                 paths.get(paths.indexOf(path)).add(path.getSum());
             } else
@@ -80,9 +79,9 @@ public class TestFullDayColorfulPNGExport extends PApplet {
         }
     }
 
-    private void setMinMax(List<TwoPointPath> list) {
-        list.sort(Comparator.comparingInt(TwoPointPath::getSum));
-        for (TwoPointPath path : list) {
+    private void setMinMax(List<Segment> list) {
+        list.sort(Comparator.comparingInt(Segment::getSum));
+        for (Segment path : list) {
             path.setMax(list.get(list.size() - 1).getSum());
             path.setMin(list.get(0).getSum());
         }
@@ -115,7 +114,7 @@ public class TestFullDayColorfulPNGExport extends PApplet {
         buildings.forEach(e -> render.drawCircle2D(e));
         //Path
         pg.strokeWeight(5 * scale);
-        for (TwoPointPath path : paths) {
+        for (Segment path : paths) {
             pg.stroke(path.getColor(false).getRGB());
             render.drawPolyLine2D(path.getPolyLine());
         }

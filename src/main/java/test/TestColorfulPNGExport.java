@@ -4,7 +4,7 @@ import dxf.DXFImporter;
 import gzf.gui.CameraController;
 import node.Node;
 import path.Manage;
-import path.TwoPointPath;
+import path.Segment;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import util.Container;
@@ -13,7 +13,6 @@ import wblut.geom.WB_Point;
 import wblut.geom.WB_PolyLine;
 import wblut.processing.WB_Render2D;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +22,7 @@ public class TestColorfulPNGExport extends PApplet {
     private WB_Render2D render;
     private List<WB_Circle> buildings;
     private List<WB_PolyLine> roads;
-    private List<TwoPointPath> paths;
+    private List<Segment> paths;
     private List<WB_Point> pois;
     private final static String dxfPath = "src/main/data/1023.dxf";
     private final static String poiPath = "src/main/data/poi1022.csv";
@@ -80,7 +79,7 @@ public class TestColorfulPNGExport extends PApplet {
         buildings.forEach(e -> render.drawCircle2D(e));
         //Path
         pg.strokeWeight(5 * scale);
-        for (TwoPointPath path : paths) {
+        for (Segment path : paths) {
             pg.stroke(path.getColor(true).getRGB());
             render.drawPolyLine2D(path.getPolyLine());
         }

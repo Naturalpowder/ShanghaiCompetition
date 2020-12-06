@@ -20,7 +20,7 @@ public class NodesAdd {
     private final List<Node> pois, buildings, path;
     private final List<int[]> pathEdges;
     private List<Node> nodes;
-    private List<int[]> edges;
+    private List<int[]> edges, shortEdges;
 
     public NodesAdd(List<Node> pois, List<Node> buildings, List<Node> path, List<int[]> pathEdges) {
         this.pois = pois;
@@ -36,6 +36,7 @@ public class NodesAdd {
         edges = new ArrayList<>();
         addNodes(pois);
         addNodes(buildings);
+        shortEdges = new ArrayList<>(edges);
         edges.addAll(pathEdges);
 //        adapt();
     }
@@ -87,11 +88,19 @@ public class NodesAdd {
         });
     }
 
+    public List<int[]> getPathEdges() {
+        return pathEdges;
+    }
+
     public List<Node> getNodes() {
         return nodes;
     }
 
     public List<int[]> getEdges() {
         return edges;
+    }
+
+    public List<int[]> getShortEdges() {
+        return shortEdges;
     }
 }

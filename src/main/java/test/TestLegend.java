@@ -1,12 +1,8 @@
 package test;
 
-import path.Manage;
-import path.TwoPointPath;
 import processing.core.PApplet;
 import util.Legend;
 import wblut.geom.WB_Point;
-
-import java.util.List;
 
 /**
  * @program: ShanghaiCompetition

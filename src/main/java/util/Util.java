@@ -3,6 +3,7 @@ package util;
 import node.Node;
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import path.Path;
 import wblut.geom.WB_Point;
 import wblut.geom.WB_PolyLine;
 
@@ -17,6 +18,10 @@ import java.util.stream.Collectors;
  * @create: 2020-10-19 17:23
  **/
 public class Util {
+
+    public static WB_PolyLine PathToPolyLine(Path path) {
+        return new WB_PolyLine(path.getPath().getVertexList().stream().map(Node::getPt).collect(Collectors.toList()));
+    }
 
     public static WB_PolyLine toPolyLine(GraphPath<Node, DefaultWeightedEdge> p) {
         List<Node> nodes = p.getVertexList();

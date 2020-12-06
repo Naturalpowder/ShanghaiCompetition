@@ -34,9 +34,13 @@ public class DXFImporter {
      * @param args
      */
     public static void main(String[] args) {
-        DXFImporter importer = new DXFImporter("src/main/data/LineRead.dxf", GBK);
-        List<WB_PolyLine> lines = importer.getLines("0");
-        List<WB_Point> points = importer.getPoints("0");
+        DXFImporter importer = new DXFImporter("src/main/data/test1.dxf", GBK);
+//        List<WB_PolyLine> lines = importer.getLines("0");
+//        List<WB_Point> points = importer.getPoints("0");
+        List<WB_Polygon> polygons = importer.getPolygons("2");
+        for (WB_Polygon polygon : polygons) {
+            System.out.println(polygon);
+        }
     }
 
     private final String filePath;

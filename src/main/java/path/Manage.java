@@ -14,20 +14,18 @@ import wblut.geom.WB_GeometryOp;
 import wblut.geom.WB_PolyLine;
 import wblut.geom.WB_Polygon;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Manage {
     private final String poiPath, roadPath;
     private List<Node> nodes, pois, buildings, path;
-    private List<int[]> edges, pathEdges;
+    private List<int[]> edges, pathEdges, shortEdges, cutEdges;
     private PathSelector selector;
 
     public static void main(String[] args) {
         Manage manage = new Manage("src/main/data/poi1021.csv", "src/main/data/1021.dxf");
-        List<TwoPointPath> list = manage.getRandomShortestPathColorful();
+        List<Segment> list = manage.getRandomShortestPathColorful();
         System.out.println(list.size());
     }
 
@@ -55,8 +53,8 @@ public class Manage {
         return selector.getCenterPaths();
     }
 
-    public List<TwoPointPath> getBuildingNRandomShortestPathColorful(BuildingCenterPaths centerPaths) {
-        List<TwoPointPath> paths = new ArrayList<>();
+    public List<Segment> getBuildingNRandomShortestPathColorful(BuildingCenterPaths centerPaths) {
+        List<Segment> paths = new ArrayList<>();
         List<Path> randomPaths = selector.randomChooseOneBuilding(centerPaths);
         for (Path randomPath : randomPaths) {
             addTwoPointPath(paths, randomPath);
@@ -65,30 +63,44 @@ public class Manage {
         return paths;
     }
 
-    public List<TwoPointPath> getRandomShortestPathColorful() {
+    public List<Segment> animatePath(List<Path> paths) {
+        List<Segment> list = new ArrayList<>();
+        for (Path path : paths)
+            addTwoPointPath(list, path);
+        setTwoPointPaths(list);
+        return list;
+    }
+
+    public List<Path> getRandomPaths() {
+        return selector.randomChoose();
+    }
+
+    public List<Segment> getRandomShortestPathColorful() {
         List<Path> randomPaths = selector.randomChoose();
-        List<TwoPointPath> list = new ArrayList<>();
+        List<Segment> list = new ArrayList<>();
         for (Path randomPath : randomPaths)
             addTwoPointPath(list, randomPath);
         setTwoPointPaths(list);
         return list;
     }
 
-    private void setTwoPointPaths(List<TwoPointPath> list) {
-        list.sort(Comparator.comparingInt(TwoPointPath::getSum));
-        for (TwoPointPath path : list) {
+    private void setTwoPointPaths(List<Segment> list) {
+        list.sort(Comparator.comparingInt(Segment::getSum));
+        for (Segment path : list) {
             path.setMax(list.get(list.size() - 1).getSum());
             path.setMin(list.get(0).getSum());
         }
-        System.out.println("Max = " + list.get(0).getMax());
-        System.out.println("Min = " + list.get(0).getMin());
-        System.out.println("-------------------------------");
+        if (!list.isEmpty()) {
+            System.out.println("Max = " + list.get(0).getMax());
+            System.out.println("Min = " + list.get(0).getMin());
+            System.out.println("-------------------------------");
+        }
     }
 
-    private void addTwoPointPath(List<TwoPointPath> list, Path randomPath) {
+    private void addTwoPointPath(List<Segment> list, Path randomPath) {
         List<Node> nodes = randomPath.getPath().getVertexList();
         for (int i = 1; i < nodes.size() - 2; i++) {
-            TwoPointPath path = new TwoPointPath(nodes.get(i), nodes.get(i + 1));
+            Segment path = new Segment(nodes.get(i), nodes.get(i + 1));
             if (list.contains(path))
                 list.get(list.indexOf(path)).add(1);
             else
@@ -166,10 +178,26 @@ public class Manage {
         return pois;
     }
 
-    public List<WB_PolyLine> getBaseLines() {
+    public List<WB_PolyLine> getCutLines() {
+        return cutEdges.stream().map(
+                e -> new WB_PolyLine(nodes.get(e[0]).getPt(), nodes.get(e[1]).getPt())
+        ).collect(Collectors.toList());
+    }
+
+    public List<WB_PolyLine> getShortLines() {
+        return shortEdges.stream().map(
+                e -> new WB_PolyLine(nodes.get(e[0]).getPt(), nodes.get(e[1]).getPt())
+        ).collect(Collectors.toList());
+    }
+
+    public List<WB_PolyLine> getMergedLines() {
         return edges.stream().map(
                 e -> new WB_PolyLine(nodes.get(e[0]).getPt(), nodes.get(e[1]).getPt())
         ).collect(Collectors.toList());
+    }
+
+    public List<Node> getNodes() {
+        return nodes;
     }
 
     private void addNodesEdges() {
@@ -177,6 +205,8 @@ public class Manage {
         nodesAdd.initial();
         edges = nodesAdd.getEdges();
         nodes = nodesAdd.getNodes();
+        shortEdges = nodesAdd.getShortEdges();
+        cutEdges = nodesAdd.getPathEdges();
         remainCorrectTimeNode(pois);
 //        printInfo();
         System.out.println("edges = " + edges.size());

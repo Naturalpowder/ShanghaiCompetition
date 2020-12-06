@@ -14,12 +14,12 @@ import java.util.Objects;
  * @author: Naturalpowder
  * @create: 2020-10-22 16:45
  **/
-public class TwoPointPath {
+public class Segment {
     private final Node start;
     private final Node end;
     private int sum = 0, min = -1, max = -1;
 
-    public TwoPointPath(Node start, Node end) {
+    public Segment(Node start, Node end) {
         this.start = start;
         this.end = end;
         sum = 1;
@@ -74,7 +74,7 @@ public class TwoPointPath {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TwoPointPath that = (TwoPointPath) o;
+        Segment that = (Segment) o;
         return (start.getPt().equals(that.getStart().getPt())
                 && end.getPt().equals(that.getEnd().getPt())) ||
                 (start.getPt().equals(that.getEnd().getPt())
